@@ -1,1 +1,4 @@
-# This is an empty file for now
+from models.engine import FileStorage
+
+storage = FileStorage()
+storage.reload()

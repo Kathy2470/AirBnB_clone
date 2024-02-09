@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """Module for BaseModel class."""
+from models import storage
 import json
 import uuid
 from datetime import datetime
