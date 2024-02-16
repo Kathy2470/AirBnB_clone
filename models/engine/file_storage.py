@@ -1,42 +1,20 @@
 #!/usr/bin/python3
-"""Defines the FileStorage class."""
-import json
-import datetime
+"""Defines the reload method of FileStorage class."""
 import os
+import json
 
 
 class FileStorage:
-    """Represent an abstracted storage engine.
+    """Handles serialization and deserialization of instances to JSON file."""
 
-    Attributes:
-        __file_path (str): The name of the file to save objects to.
-        __objects (dict): A dictionary of instantiated objects.
-    """
     __file_path = "file.json"
     __objects = {}
 
-    def all(self):
-        """Return the dictionary __objects."""
-        return FileStorage.__objects
-
-    def new(self, obj):
-        """Set in __objects obj with key <obj_class_name>.id"""
-        ocname = obj.__class__.__name__
-        FileStorage.__objects["{}.{}".format(ocname, obj.id)] = obj
-
-    def save(self):
-        """Serialize __objects to the JSON file __file_path."""
-        odict = FileStorage.__objects
-        objdict = {obj: odict[obj].to_dict() for obj in odict.keys()}
-        with open(FileStorage.__file_path, "w") as f:
-            json.dump(objdict, f)
-
     def reload(self):
-        """Reloads the stored objects from the JSON file __file_path, if it exists."""
+        """Reloads the stored objects from the JSON file."""
         try:
             if not os.path.isfile(FileStorage.__file_path):
                 return
-
 
             with open(FileStorage.__file_path, "r", encoding="utf-8") as file:
                 obj_dict = json.load(file)
@@ -48,3 +26,20 @@ class FileStorage:
 
         except FileNotFoundError:
             pass
+
+    def classes(self):
+        """Returns a dictionary of available classes."""
+        from models.base_model import BaseModel
+        from models.state import State
+        from models.city import City
+        from models.amenity import Amenity
+        from models.place import Place
+        from models.review import Review
+        return {
+                "BaseModel": BaseModel,
+                "State": State,
+                "City": City,
+                "Amenity": Amenity,
+                "Place": Place,
+                "Review": Review
+            }
