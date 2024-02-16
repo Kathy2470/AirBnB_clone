@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 """Defines the FileStorage class."""
 import json
+import datetime
+import os
+
 
 class FileStorage:
     """Represent an abstracted storage engine.
@@ -29,14 +32,19 @@ class FileStorage:
             json.dump(objdict, f)
 
     def reload(self):
-        """Deserialize the JSON file __file_path to __objects, if it exists."""
+        """Reloads the stored objects from the JSON file __file_path, if it exists."""
         try:
-            with open(FileStorage.__file_path, "r") as file:
+            if not os.path.isfile(FileStorage.__file_path):
+                return
+
+
+            with open(FileStorage.__file_path, "r", encoding="utf-8") as file:
                 obj_dict = json.load(file)
                 for key, val in obj_dict.items():
-                    _class = globals()[val['__class__']]
+                    _class = self.classes()[val['__class__']]
                     obj_instance = _class(**val)
                     FileStorage.__objects[key] = obj_instance
                     print(f"Reload object: {obj_instance}")
+
         except FileNotFoundError:
             pass
