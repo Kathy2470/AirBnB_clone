@@ -1,41 +1,64 @@
 #!/usr/bin/python3
-"""Module for BaseModel class."""
-from models import storage
-import json
+"""
+Defines BaseModel, which serves as the foundation for other classes.
+"""
+
 import uuid
 from datetime import datetime
+from models import storage
 
 
 class BaseModel:
-    """Defines the BaseModel class."""
+    """
+    BaseModel class serves as the foundation for other classes.
+    """
 
     def __init__(self, *args, **kwargs):
-        """Initialize BaseModel."""
-        if kwargs:
-            for key, value in kwargs.items():
-                if key == "__class__":
-                    continue
-                if key == "created_at" or key == "updated_at":
-                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
-                setattr(self, key, value)
-        else:
-            self.id = str(uuid.uuid4())
-            self.created_at = self.updated_at = datetime.now()
+        """
+        Initializes instance attributes.
+        """
 
-    def save(self):
-        """Update updated_at attribute."""
-        self.updated_at = datetime.now()
+        if kwargs and kwargs != {}:
+            for key in kwargs:
+                if key == "created_at":
+                    self.__dict__["created_at"] = datetime.strptime(
+                        kwargs["created_at"], "%Y-%m-%dT%H:%M:%S.%f")
+                    elif key == "updated_at":
+                        self.__dict__["updated_at"] = datetime.strptime(
+                            kwargs["updated_at"], "%Y-%m-%dT%H:%M:%S.%f")
 
-    def to_dict(self):
-        """Return dictionary representation of object."""
-        obj_dict = self.__dict__.copy()
-        obj_dict["__class__"] = self.__class__.__name__
-        obj_dict["created_at"] = self.created_at.isoformat()
-        obj_dict["updated_at"] = self.updated_at.isoformat()
-        return obj_dict
+                        else:
+                            self.__dict__[key] = kwargs[key]
+
+                    else:
+                        self.id = str(uuid.uuid4())
+                        self.created_at = datetime.now()
+                        self.updated_at = datetime.now()
+                        storage.new(self)
 
     def __str__(self):
-        """Return string representation of object."""
-        return "[{}] ({}) {}".format(
-            self.__class__.__name__, self.id, self.__dict__
-        )
+        """
+        Returns a string representation of the object.
+        """
+
+        return "[{}] ({}) {}".\
+            format(type(self).__name__, self.id, self.__dict__)
+
+    def save(self):
+        """
+        Updates the public instance attribute.
+        """
+
+        self.updated_at = datetime.now()
+        storage.save()
+
+    def to_dict(self):
+        """
+        Returns a dictionary containing all leys/values of __dict__.
+        """
+
+        my_dict = self.__dict__.copy()
+        my_dict["__class__"] = type(self).__name__
+        my_dict["created_at"] = my_dict["created_at"].isoformat()
+        my_dict["updated_at"] = my_dict["updated_at"].isoformat()
+        return my_dict
