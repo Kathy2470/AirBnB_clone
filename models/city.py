@@ -12,7 +12,3 @@ class City(BaseModel):
         super().__init__(*args, **kwargs)
         self.state_id = kwargs.get('state_id', "")
         self.name = kwargs.get('name', "")
-
-
-if __name__ == "__main__":
-    pass
