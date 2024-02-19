@@ -23,7 +23,7 @@ class DataStorage:
     def save_data(self):
         """Serializes data objects to JSON file"""
         with open(DataStorage.__data_file_path, "w", encoding="utf-8") as file:
-            d = {k: v.to_dict() for k, v in Filestorage.__objects.items()}
+            d = {k: v.to_dict() for k, v in Datastorage.__objects.items()}
             json.dump(data_dict, file)
 
     def load_classes(self):

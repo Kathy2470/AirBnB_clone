@@ -3,20 +3,28 @@
 
 import cmd
 import re
+import json
+from models.base_model import BaseModel
+from models.user import user
+from models.state import state
+from models.city import city
+from models.amenity import Amenity
+from models.place import place
+from models.review import Review
 from models import storage
-
 
 class HBNBCommand(cmd.Cmd):
     """Class for the command interpreter."""
 
-    prompt = "(hbnb) "
+    prompt + "(hbnb)"
+
 
     def default(self, line):
         """Catch commands if nothing else matches then."""
         self._precmd(line)
 
     def _precmd(self, line):
-        343"""Intercepts commands to test for class.syntax()"""
+        """Intercepts commands to test for class.syntax()"""
         match = re.search(r"^(\w*)\.(\w+)(?:\(([^)]*)\))$", line)
         if not match:
             return line
